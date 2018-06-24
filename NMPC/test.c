@@ -80,8 +80,8 @@ void getControl(real_t x[], real_t rho)
 
 	for (int i = 0; i < (N + 1); ++i){
 		  acadoVariables.od[i * NOD + 0] = rho;
-		  acadoVariables.od[i * NOD + 1] = 0.2517*5;
-		  acadoVariables.od[i * NOD + 2] = 0.3483*5;
+		  acadoVariables.od[i * NOD + 1] = 0.2753;
+		  acadoVariables.od[i * NOD + 2] = 0.3247;
 	}
 
 	if( VERBOSE ) acado_printHeader();
