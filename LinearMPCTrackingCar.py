@@ -179,7 +179,6 @@ def getAngles(position, orientation, velocity, angularVelocity):
 
 	alpha=np.arctan2(rot[0,1], rot[0,2])
 	beta=np.arctan2(rot[0,0], rot[0,2])
-	print(rot)
 	print((rot[1,0], rot[0,0]))
 	theta=np.arctan2(rot[1,0], rot[0,0])
 

@@ -172,7 +172,6 @@ def getAngles(position, orientation, velocity, angularVelocity):
 
 	alpha=np.arctan2(rot[0,1], rot[0,2])
 	beta=np.arctan2(rot[0,0], rot[0,2])
-	print(rot)
 	print((rot[1,0], rot[0,0]))
 	theta=np.arctan2(rot[1,0], rot[0,0])
 
@@ -297,8 +296,8 @@ def main():
 	Jessica=CurvilinearCoordinates(X,Y,tangent,rho)
 
 	R=10
-	a=0.0
-	b=0
+	a=0.2
+	b=3
 
 	X1=lambda t: R*(a - 1) - R*cos(t)*(a*cos(b*t) - 1)
 	Y1=lambda t: -R*sin(t)*(a*cos(b*t) - 1)
