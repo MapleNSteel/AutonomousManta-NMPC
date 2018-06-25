@@ -33,17 +33,13 @@ xSigmaPrev=0
 maxtimeDuration=0
 mintimeDuration=1e2
 
-Lr=1.2888
-Lf=1.2884
+Lr=0.3247
+Lf=0.2753
 
 controlInput=cvxopt.matrix(np.array([[1],[0]]))
 
 stateLength=2
 controlLength=2
-
-Q=cvxopt.matrix(np.array(np.diag([1, 1e-3])))#Running Cost - x
-R=cvxopt.matrix(np.array(np.diag([1e-3, 1e-3])))#Running Cost - u
-S=cvxopt.matrix(np.array(np.diag([1, 1e-5, 1e-4])))#TerMinal Cost -x
 
 K=np.zeros((stateLength, controlLength))
 
@@ -62,8 +58,7 @@ psieMin=-pi/3
 psieMax=pi/3
 
 # Robust Values; with ye, psie noise ranges - 1e-3, 1e-2
-vMinRobust=1.0019
-vMaxRobust=1.9811
+vRef=5
 
 sMinRobust=-0.5791
 sMaxRobust=0.5791
@@ -74,43 +69,7 @@ yeMaxRobust=0.2468
 psieMinRobust=-0.5396
 psieMaxRobust=0.5396
 
-g1=cvxopt.matrix(np.array([
-   [ 1,    0],
-   [-1,    0],
-   [ 0,    1],
-   [ 0,   -1]]), tc='d')
-h1=cvxopt.sparse([cvxopt.matrix(np.array([
-   [ vMaxRobust],
-   [-vMinRobust],
-   [ sMaxRobust],
-   [-sMinRobust]]), tc='d') for i in range(0,N)])
-g2=cvxopt.matrix(np.array([[1, 0], [-1, 0], [0, 1], [0, -1]]), tc='d')
-h2=cvxopt.sparse([cvxopt.matrix(np.array([[yeMaxRobust], [-yeMinRobust], [psieMaxRobust], [-psieMinRobust]]), tc='d') for i in range(0,N)])
-
 c=[]
-#Sparsifying non-square matrix
-for i in range(0,N):
-	a=[]
-	for j in range(0,N):
-		if(j==i):
-			a.append(g1)
-		else:
-			a.append(cvxopt.matrix(np.zeros(np.shape(g1))))
-	c.append(a)
-
-g1=cvxopt.sparse(c)
-
-c=[]
-for i in range(0,N):
-	a=[]
-	for j in range(0,N):
-		if(j==i):
-			a.append(g2)
-		else:
-			a.append(cvxopt.matrix(np.zeros(np.shape(g2))))
-	c.append(a)
-
-g2=cvxopt.sparse(c)
 
 ready=False
 
@@ -172,14 +131,13 @@ def getAngles(position, orientation, velocity, angularVelocity):
 
 	alpha=np.arctan2(rot[0,1], rot[0,2])
 	beta=np.arctan2(rot[0,0], rot[0,2])
-	print((rot[1,0], rot[0,0]))
 	theta=np.arctan2(rot[1,0], rot[0,0])
 
 	return psi, alpha, beta, theta
 
 def control(x, y, psi, beta):
 
-	global startTime, velocity, accum, ySigmaPrev, Kp, Ki, Kd, pubState, Jessica, CC, Schmidt, CC2, xSigmaPrev, timeDuration, controlInput, deltaSigma, N, stateLength, controlLength, Lf, Lr, T, K, Q, R, S, vMin, vMax, sMin, sMax, g, h, maxtimeDuration, mintimeDuration
+	global startTime, velocity, accum, ySigmaPrev, Kp, Ki, Kd, pubState, Jessica, CC, Schmidt, CC2, xSigmaPrev, timeDuration, controlInput, deltaSigma, N, stateLength, controlLength, Lf, Lr, T, K, Q, R, S, vRef, sMin, sMax, g, h, maxtimeDuration, mintimeDuration
 
 	cc=CC
 	[phi, xSigma, ySigma, psiSigma, dtSigma]=traj(x, y, velocity, psi, beta, cc)
@@ -187,10 +145,11 @@ def control(x, y, psi, beta):
 	xSigmaPrev=xSigma
 	pubState.publish(np.array([ySigma, psiSigma]))
 
-	p = subprocess.Popen("./NMPC/test "+str(ySigma)+" "+str(psiSigma)+" "+str(cc.rho(phi))+"", stdout=subprocess.PIPE, shell=True)
+	p = subprocess.Popen("./NMPC/test "+str(ySigma)+" "+str(psiSigma)+" "+str(phi)+" "+str(0)+" "+str(cc.rho(phi))+" "+str(vRef), stdout=subprocess.PIPE, shell=True)
 	(output, err) = p.communicate()
 
 	output=output.decode("utf-8")
+	print(output[output.index('[')+1:])
 	outputs=(output[output.index('[')+1:-3]).split(', ')
 
 	controlInput=np.array([float(outputs[0]), float(outputs[1])])

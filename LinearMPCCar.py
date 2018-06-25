@@ -33,8 +33,8 @@ xSigmaPrev=0
 maxtimeDuration=0
 mintimeDuration=1e2
 
-Lr=1.2888
-Lf=1.2884
+Lr=0.3247
+Lf=0.2753
 
 controlInput=cvxopt.matrix(np.array([[1],[0]]))
 
@@ -62,8 +62,8 @@ psieMin=-pi/3
 psieMax=pi/3
 
 # Robust Values; with ye, psie noise ranges - 1e-3, 1e-2
-vMinRobust=1.0019
-vMaxRobust=1.9811
+vMinRobust=1.0000
+vMaxRobust=1.0000
 
 sMinRobust=-0.5791
 sMaxRobust=0.5791

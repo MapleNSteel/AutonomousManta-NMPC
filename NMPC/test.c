@@ -55,7 +55,7 @@ ACADOvariables acadoVariables;
 ACADOworkspace acadoWorkspace;
 
 /* A template for testing of the solver. */
-void getControl(real_t x[], real_t rho)
+void getControl(real_t x[], real_t rho, real_t vRef)
 {
 	/* Some temporary variables. */
 	int    i, iter;
@@ -76,12 +76,15 @@ void getControl(real_t x[], real_t rho)
 #if ACADO_INITIAL_STATE_FIXED
 	for (i = 0; i < NX; ++i) acadoVariables.x0[ i ] = 0.1;
 #endif
-	for (i = 0; i < NX; ++i) acadoVariables.x0[ i ] = x[i];
+	for (i = 0; i < NX; ++i){
+		acadoVariables.x0[ i ] = x[i];
+	}
 
 	for (int i = 0; i < (N + 1); ++i){
 		  acadoVariables.od[i * NOD + 0] = rho;
-		  acadoVariables.od[i * NOD + 1] = 0.2753;
-		  acadoVariables.od[i * NOD + 2] = 0.3247;
+		  acadoVariables.od[i * NOD + 1] = vRef;
+		  acadoVariables.od[i * NOD + 2] = 0.2753;
+		  acadoVariables.od[i * NOD + 3] = 0.3247;
 	}
 
 	if( VERBOSE ) acado_printHeader();
@@ -124,16 +127,17 @@ void getControl(real_t x[], real_t rho)
 }
 int main( int argc, char **argv ){
 
-	if(argc<4){
+	if(argc<5){
 		return 0;
 	}
 	
 	real_t x[NX];
-	real_t rho=atof(argv[3]);
+	real_t rho=atof(argv[5]);
+	real_t vRef=atof(argv[6]);
 	
 	for (int i = 0; i < NX; ++i) x[ i ] = atof(argv[i+1]);
 
-	getControl(x, rho);
+	getControl(x, rho, vRef);
 
 	//for (int i = 0; i < ACADO_N; ++i)
 	//{
@@ -142,7 +146,7 @@ int main( int argc, char **argv ){
 	//	printf("\n");
 	//}
 
-	printf("[%e, %e]\n\n", acadoVariables.u[0], acadoVariables.u[1]);
+	printf("[%e, %e]\n\n", vRef, acadoVariables.u[0]);
 	
 	return 0;
 }

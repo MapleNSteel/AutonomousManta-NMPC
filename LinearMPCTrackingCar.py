@@ -32,8 +32,8 @@ xSigmaPrev=0
 maxtimeDuration=0
 mintimeDuration=1e2
 
-Lr=1.2888
-Lf=1.2884
+Lr=0.3247
+Lf=0.2753
 
 controlInput=cvxopt.matrix(np.array([[1],[0]]))
 
