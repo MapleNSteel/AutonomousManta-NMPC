@@ -260,11 +260,12 @@ def main():
 		exit(0)
 
 	while(running):
+		start_time = time.time()
 		setVehicleState(desiredSteeringAngle, desiredSpeed, [0, 0, 0, 0])
 		getVehicleState()		
 
-		elapsedTime+=deltaTime
+		elapsedTime+=deltaTime		
+		timeDuration = time.time()-start_time
 		vrep.simxSynchronousTrigger(clientID)
-		sleep(0.02)
 if __name__=="__main__":
 	main()
