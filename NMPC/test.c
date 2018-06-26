@@ -146,7 +146,7 @@ int main( int argc, char **argv ){
 	//	printf("\n");
 	//}
 
-	printf("[%e, %e]\n\n", vRef, acadoVariables.u[0]);
+	printf("[%e, %e]\n\n", acadoVariables.u[0], acadoVariables.u[1]);
 	
 	return 0;
 }

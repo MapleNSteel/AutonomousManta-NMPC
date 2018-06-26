@@ -58,7 +58,7 @@ psieMin=-pi/3
 psieMax=pi/3
 
 # Robust Values; with ye, psie noise ranges - 1e-3, 1e-2
-vRef=5
+vRef=3
 
 sMinRobust=-0.5791
 sMaxRobust=0.5791
@@ -149,7 +149,6 @@ def control(x, y, psi, beta):
 	(output, err) = p.communicate()
 
 	output=output.decode("utf-8")
-	print(output[output.index('[')+1:])
 	outputs=(output[output.index('[')+1:-3]).split(', ')
 
 	controlInput=np.array([float(outputs[0]), float(outputs[1])])

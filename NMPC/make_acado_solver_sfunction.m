@@ -23,9 +23,9 @@ ACADO_N   = 30;
 ACADO_NX  = 4;
 ACADO_NDX = 0;
 ACADO_NXA = 0;
-ACADO_NU  = 1;
+ACADO_NU  = 2;
 ACADO_NOD = 4;
-ACADO_NY  = 4;
+ACADO_NY  = 5;
 ACADO_NYN = 3;
 
 ACADO_QP_SOLVER                   = 'QPOASES';
