@@ -130,6 +130,10 @@ def setVehicleState(desiredSteeringAngle, desiredSpeed, breakValues):
 		desiredSteeringAngle,
 		vrep.simx_opmode_streaming)
 	# Throttle
+	vrep.simxSetJointForce(clientID,
+		throttle_handles[0],
+		60,
+		vrep.simx_opmode_streaming)
 	vrep.simxSetJointTargetVelocity(clientID,
 		throttle_handles[0],
 		desiredSpeed,

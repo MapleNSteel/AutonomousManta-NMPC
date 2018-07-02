@@ -58,7 +58,7 @@ psieMin=-pi/3
 psieMax=pi/3
 
 # Robust Values; with ye, psie noise ranges - 1e-3, 1e-2
-vRef=3
+vRef=1
 
 sMinRobust=-0.5791
 sMaxRobust=0.5791
@@ -68,8 +68,6 @@ yeMaxRobust=0.2468
 
 psieMinRobust=-0.5396
 psieMaxRobust=0.5396
-
-c=[]
 
 ready=False
 
@@ -253,7 +251,7 @@ def main():
 
 	Jessica=CurvilinearCoordinates(X,Y,tangent,rho)
 
-	R=10
+	R=10.0
 	a=0.2
 	b=3
 
