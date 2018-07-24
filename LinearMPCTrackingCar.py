@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg
+import scipy
+from scipy import integrate
 from numpy import pi
 from numpy import tan,arctan,sin,cos,arctan2,sign,fmod,sqrt
 from time import sleep
@@ -243,7 +245,7 @@ def traj(x, y, v, psi, beta, CC):
 	psit=np.squeeze(arctan2(tangent[1], tangent[0]))
 	normal=np.squeeze(np.array([tangent[1],-tangent[0]]))
 
-	xSigma=np.squeeze(scipy.integrate.quad(lambda x: np.sqrt(CC.tangent(x)[0]**2+CC.tangent(x)[1]**2), 0, phi)[0])
+	xSigma=np.squeeze(integrate.quad(lambda x: np.sqrt(CC.tangent(x)[0]**2+CC.tangent(x)[1]**2), 0, phi)[0])
 	ySigma=np.squeeze(cos(psit)*(y-yt) - sin(psit)*(x-xt))
 	psiSigma=np.arctan2(np.sin(np.squeeze(psi-psit)), np.cos(np.squeeze(psi-psit)))
 

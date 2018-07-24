@@ -18,8 +18,6 @@ from nav_msgs.msg import Odometry
 import transforms3d
 from KalmanFilters.EKF import ExtendedKalmanFilter
 from Utilities.CurvilinearCoordinates import *
-from youbot_interface.msg import Floats
-
 running=True
 timeDuration=0
 startTime=time.time()
@@ -135,13 +133,12 @@ def getAngles(position, orientation, velocity, angularVelocity):
 
 def control(x, y, psi, beta):
 
-	global startTime, velocity, accum, ySigmaPrev, Kp, Ki, Kd, pubState, Jessica, CC, Schmidt, CC2, xSigmaPrev, timeDuration, controlInput, deltaSigma, N, stateLength, controlLength, Lf, Lr, T, K, Q, R, S, vRef, sMin, sMax, g, h, maxtimeDuration, mintimeDuration
+	global startTime, velocity, accum, ySigmaPrev, Kp, Ki, Kd, Jessica, CC, Schmidt, CC2, xSigmaPrev, timeDuration, controlInput, deltaSigma, N, stateLength, controlLength, Lf, Lr, T, K, Q, R, S, vRef, sMin, sMax, g, h, maxtimeDuration, mintimeDuration
 
 	cc=CC
 	[phi, xSigma, ySigma, psiSigma, dtSigma]=traj(x, y, velocity, psi, beta, cc)
 	deltaSigma=xSigma-xSigmaPrev
 	xSigmaPrev=xSigma
-	pubState.publish(np.array([ySigma, psiSigma]))
 
 	p = subprocess.Popen("./NMPC/test "+str(ySigma)+" "+str(psiSigma)+" "+str(phi)+" "+str(0)+" "+str(cc.rho(phi))+" "+str(vRef), stdout=subprocess.PIPE, shell=True)
 	(output, err) = p.communicate()
@@ -232,7 +229,7 @@ def sendControls():
 
 def main():
 
-	global clientID, joint_names, throttle_joint, joint_handles, throttle_handles, body_handle, pubOdom, Pose, EKF, timeDuration, startTime, pubThrottle, pubSteering, pubState, Jessica, CC, Schmidt, CC2
+	global clientID, joint_names, throttle_joint, joint_handles, throttle_handles, body_handle, pubOdom, Pose, EKF, timeDuration, startTime, pubThrottle, pubSteering, Jessica, CC, Schmidt, CC2
 	
 	rospy.init_node('Data')
 	startTime=time.time()
@@ -240,8 +237,6 @@ def main():
 	rospy.Subscriber("/manta/Odom", Odometry, callbackOdom)
 	pubThrottle = rospy.Publisher('/manta/Throttle', Float32, queue_size=1)
 	pubSteering = rospy.Publisher('/manta/Steering', Float32, queue_size=1)
-
-	pubState = rospy.Publisher('/manta/State', Floats, queue_size=10)
 
 	X=lambda t: 10*cos(t)-10
 	Y=lambda t: 10*sin(t)

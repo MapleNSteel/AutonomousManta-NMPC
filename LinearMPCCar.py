@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.linalg
+import scipy
+from scipy import integrate
 from numpy import pi
 from numpy import tan,arctan,sin,cos,arctan2,sign,fmod,sqrt
 from time import sleep
@@ -18,7 +20,6 @@ import transforms3d
 from KalmanFilters.EKF import ExtendedKalmanFilter
 from Utilities.CurvilinearCoordinates import *
 from Controllers.LinearMPC import *
-from youbot_interface.msg import Floats
 
 running=True
 timeDuration=0
@@ -179,13 +180,12 @@ def getAngles(position, orientation, velocity, angularVelocity):
 
 def control(x, y, psi, beta):
 
-	global startTime, velocity, accum, ySigmaPrev, Kp, Ki, Kd, pubState, Jessica, CC, Schmidt, CC2, xSigmaPrev, timeDuration, controlInput, deltaSigma, N, stateLength, controlLength, Lf, Lr, T, K, Q, R, S, vMin, vMax, sMin, sMax, g, h, maxtimeDuration, mintimeDuration
+	global startTime, velocity, accum, ySigmaPrev, Kp, Ki, Kd, Jessica, CC, Schmidt, CC2, xSigmaPrev, timeDuration, controlInput, deltaSigma, N, stateLength, controlLength, Lf, Lr, T, K, Q, R, S, vMin, vMax, sMin, sMax, g, h, maxtimeDuration, mintimeDuration
 
 	cc=CC
 	[phi, xSigma, ySigma, psiSigma, dtSigma]=traj(x, y, velocity, psi, beta, cc)
 	deltaSigma=xSigma-xSigmaPrev
 	xSigmaPrev=xSigma
-	pubState.publish(np.array([ySigma, psiSigma]))
 	
 	x=np.array([[ySigma], [psiSigma]])
 	r=cvxopt.sparse([cvxopt.matrix(np.array([[0.0], [0.0]])) for i in range(0,N)])
@@ -236,7 +236,7 @@ def traj(x, y, v, psi, beta, CC):
 	psit=np.squeeze(arctan2(tangent[1], tangent[0]))
 	normal=np.squeeze(np.array([tangent[1],-tangent[0]]))
 
-	xSigma=np.squeeze(scipy.integrate.quad(lambda x: np.sqrt(CC.tangent(x)[0]**2+CC.tangent(x)[1]**2), 0, phi)[0])
+	xSigma=np.squeeze(integrate.quad(lambda x: np.sqrt(CC.tangent(x)[0]**2+CC.tangent(x)[1]**2), 0, phi)[0])
 	ySigma=np.squeeze(cos(psit)*(y-yt) - sin(psit)*(x-xt))
 	psiSigma=np.arctan2(np.sin(np.squeeze(psi-psit)), np.cos(np.squeeze(psi-psit)))
 
@@ -291,7 +291,7 @@ def sendControls():
 
 def main():
 
-	global clientID, joint_names, throttle_joint, joint_handles, throttle_handles, body_handle, pubOdom, Pose, EKF, timeDuration, startTime, pubThrottle, pubSteering, pubState, Jessica, CC, Schmidt, CC2
+	global clientID, joint_names, throttle_joint, joint_handles, throttle_handles, body_handle, pubOdom, Pose, EKF, timeDuration, startTime, pubThrottle, pubSteering, Jessica, CC, Schmidt, CC2
 	
 	rospy.init_node('Data')
 	startTime=time.time()
@@ -299,8 +299,6 @@ def main():
 	rospy.Subscriber("/manta/Odom", Odometry, callbackOdom)
 	pubThrottle = rospy.Publisher('/manta/Throttle', Float32, queue_size=1)
 	pubSteering = rospy.Publisher('/manta/Steering', Float32, queue_size=1)
-
-	pubState = rospy.Publisher('/manta/State', Floats, queue_size=10)
 
 	X=lambda t: 10*cos(t)-10
 	Y=lambda t: 10*sin(t)
